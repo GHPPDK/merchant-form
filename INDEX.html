@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merchant Application Form - Drag Mode</title>
+  <style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f0f0f0;
+  }
+
+  .form-container {
+    position: relative;
+    width: 794px;
+    height: 2246px;
+    background: url('combined_form_page_1_2.png') no-repeat top left;
+    background-size: 100% 100%;
+    border: none;
+    page-break-inside: avoid;
+  }
+
+  .drag-box {
+    position: absolute;
+    cursor: move;
+    font-size: 14px;
+  }
+
+  .drag-box input[type="text"] {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    background: transparent;
+  }
+
+  .button-bar {
+    margin-top: 10px;
+  }
+
+  .mode-select {
+    font-size: 16px;
+    padding: 5px;
+  }
+
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    .form-container, .form-container * {
+      visibility: visible;
+    }
+    .form-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 794px;
+      height: 2246px;
+      background: url('combined_form_page_1_2.png') no-repeat top left !important;
+      background-size: 100% 100% !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      page-break-after: avoid;
+    }
+    input[type="text"] {
+      border: none !important;
+      background: transparent !important;
+      color: #000 !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="button-bar" id="controls">
+    <button onclick="window.print()">🖨️ Print Form</button>
+    <label for="boxType">Select Box Type: </label>
+    <select id="boxType" class="mode-select">
+      <option value="char">Single Char Box</option>
+      <option value="multi">Multi-char Box</option>
+      <option value="check">Checkbox</option>
+    </select>
+    <button onclick="exportBoxes()">Export Positions</button>
+    <p style="font-size: 12px; margin-top: 5px;">Left-click to add, right-click to delete</p>
+  </div>
+
+  <div class="form-container" id="formArea" onclick="handleAddBox(event)"></div>
+
+  <script>
+    let counter = 0;
+
+    function makeDraggable(el) {
+      let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+      el.onmousedown = dragMouseDown;
+      el.oncontextmenu = function (e) {
+        e.preventDefault();
+        if (confirm('Delete this box?')) el.remove();
+      };
+
+      function dragMouseDown(e) {
+        if (e.button !== 0) return;
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+      }
+
+      function elementDrag(e) {
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        el.style.top = (el.offsetTop - pos2) + "px";
+        el.style.left = (el.offsetLeft - pos1) + "px";
+      }
+
+      function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+      }
+    }
+
+    function handleAddBox(e) {
+      const formArea = document.getElementById('formArea');
+      if (!formArea.contains(e.target)) return;
+      if (e.target.closest('.drag-box')) return;
+
+      const boxType = document.getElementById('boxType').value;
+      const box = document.createElement('div');
+      box.className = 'drag-box';
+      box.id = 'box' + (++counter);
+      box.dataset.type = boxType;
+      box.style.top = e.offsetY + 'px';
+      box.style.left = e.offsetX + 'px';
+
+      if (boxType === 'char') {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.maxLength = 1;
+        input.style.width = '100%';
+        input.style.height = '100%';
+        input.style.border = 'none';
+        input.style.outline = 'none';
+        input.style.fontSize = '14px';
+        input.style.background = '#fff';
+        input.style.border = '1px solid #ccc';
+        input.style.color = '#000';
+        box.style.width = '20px';
+        box.style.height = '24px';
+        input.classList.add('char-box');
+        input.addEventListener('input', function() {
+          if (this.value.length === 1) {
+            const allInputs = [...document.querySelectorAll('.char-box')];
+            const next = allInputs[allInputs.indexOf(this) + 1];
+            if (next) next.focus();
+          }
+        });
+        input.addEventListener('keydown', function(e) {
+          if (e.key === 'Backspace' && this.value === '') {
+            const allInputs = [...document.querySelectorAll('.char-box')];
+            const prev = allInputs[allInputs.indexOf(this) - 1];
+            if (prev) prev.focus();
+          }
+        });
+        box.appendChild(input);
+      } else if (boxType === 'multi') {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.style.width = '100%';
+        input.style.height = '100%';
+        input.style.border = 'none';
+        input.style.outline = 'none';
+        input.style.fontSize = '14px';
+        input.style.background = '#fff';
+        input.style.border = '1px solid #ccc';
+        input.style.color = '#000';
+        box.style.width = '200px';
+        box.style.height = '24px';
+        box.appendChild(input);
+      } else if (boxType === 'check') {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.style.width = '100%';
+        checkbox.style.height = '100%';
+        checkbox.style.margin = '0';
+        checkbox.style.cursor = 'pointer';
+        box.style.width = '20px';
+        box.style.height = '20px';
+        box.appendChild(checkbox);
+      }
+
+      formArea.appendChild(box);
+      makeDraggable(box);
+    }
+
+    function exportBoxes() {
+      const boxes = document.querySelectorAll('.drag-box');
+      let result = '';
+      boxes.forEach(box => {
+        const top = box.offsetTop;
+        const left = box.offsetLeft;
+        const type = box.dataset.type;
+        if (type === 'char') {
+          result += `<input class="char-box" maxlength="1" style="top: ${top}px; left: ${left}px; position: absolute; width: 20px; height: 24px; border: none;">
+`;
+        } else if (type === 'multi') {
+          result += `<input class="multi-box" style="top: ${top}px; left: ${left}px; position: absolute; width: 200px; height: 24px; border: none;">
+`;
+        } else if (type === 'check') {
+          result += `<input type="checkbox" style="top: ${top}px; left: ${left}px; position: absolute; width: 20px; height: 20px;">
+`;
+        }
+      });
+      console.log(result);
+      alert("HTML code copied to console. Right-click > Inspect > Console");
+    }
+      
+  // --- New Feature: Lock / Unlock Drag Mode ---
+    let isLocked = false;
+    const lockBtn = document.createElement('button');
+    lockBtn.textContent = '🔒 Lock Layout';
+    lockBtn.onclick = () => {
+      isLocked = !isLocked;
+      lockBtn.textContent = isLocked ? '🔓 Unlock Layout' : '🔒 Lock Layout';
+      document.querySelectorAll('.drag-box').forEach(box => {
+        box.onmousedown = isLocked ? null : makeDraggable(box).dragMouseDown;
+        box.style.cursor = isLocked ? 'default' : 'move';
+      });
+    };
+    document.getElementById('controls').appendChild(lockBtn);
+
+    // --- New Feature: Save Layout to File ---
+    function saveLayout() {
+      const boxes = document.querySelectorAll('.drag-box');
+      const data = Array.from(boxes).map(box => {
+        const input = box.querySelector('input');
+        return {
+          type: box.dataset.type,
+          top: box.style.top,
+          left: box.style.left,
+          width: box.style.width,
+          height: box.style.height,
+          value: input?.type === 'checkbox' ? input.checked : input?.value || ''
+        };
+      });
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'form-layout.json';
+      a.click();
+    }
+
+    // --- New Feature: Load Layout from File ---
+    function loadLayout(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const data = JSON.parse(e.target.result);
+        document.getElementById('formArea').innerHTML = '';
+        data.forEach(item => {
+          const box = document.createElement('div');
+          box.className = 'drag-box';
+          box.dataset.type = item.type;
+          box.style.top = item.top;
+          box.style.left = item.left;
+          box.style.width = item.width;
+          box.style.height = item.height;
+
+          if (item.type === 'char' || item.type === 'multi') {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = item.value || '';
+            input.maxLength = item.type === 'char' ? 1 : undefined;
+            input.style.width = '100%';
+            input.style.height = '100%';
+            input.style.border = '1px solid #ccc';
+            input.style.outline = 'none';
+            input.style.fontSize = '14px';
+            input.style.background = '#fff';
+            input.style.color = '#000';
+            if (item.type === 'char') {
+              input.classList.add('char-box');
+              input.addEventListener('input', function () {
+                if (this.value.length === 1) {
+                  const allInputs = [...document.querySelectorAll('.char-box')];
+                  const next = allInputs[allInputs.indexOf(this) + 1];
+                  if (next) next.focus();
+                }
+              });
+              input.addEventListener('keydown', function (e) {
+                if (e.key === 'Backspace' && this.value === '') {
+                  const allInputs = [...document.querySelectorAll('.char-box')];
+                  const prev = allInputs[allInputs.indexOf(this) - 1];
+                  if (prev) prev.focus();
+                }
+              });
+            }
+            box.appendChild(input);
+          } else if (item.type === 'check') {
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = item.value;
+            checkbox.style.width = '100%';
+            checkbox.style.height = '100%';
+            checkbox.style.margin = '0';
+            checkbox.style.cursor = 'pointer';
+            box.appendChild(checkbox);
+          }
+          document.getElementById('formArea').appendChild(box);
+          makeDraggable(box);
+        });
+      };
+      reader.readAsText(file);
+    }
+</script>
+<input type="file" accept=".json" onchange="loadLayout(event)" style="margin-top: 10px;">
+<button onclick="saveLayout()">💾 Save Layout</button>
+
+</body>
+</html>
