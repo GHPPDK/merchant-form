@@ -1,0 +1,138 @@
+[
+  {
+    "type": "char",
+    "top": "163px",
+    "left": "582px",
+    "width": "20px",
+    "height": "24px",
+    "value": "D"
+  },
+  {
+    "type": "char",
+    "top": "163px",
+    "left": "606px",
+    "width": "20px",
+    "height": "24px",
+    "value": "H"
+  },
+  {
+    "type": "char",
+    "top": "161px",
+    "left": "656px",
+    "width": "20px",
+    "height": "24px",
+    "value": "A"
+  },
+  {
+    "type": "char",
+    "top": "159px",
+    "left": "695px",
+    "width": "20px",
+    "height": "24px",
+    "value": "N"
+  },
+  {
+    "type": "multi",
+    "top": "276px",
+    "left": "428px",
+    "width": "200px",
+    "height": "24px",
+    "value": "SDF"
+  },
+  {
+    "type": "multi",
+    "top": "278px",
+    "left": "371px",
+    "width": "200px",
+    "height": "24px",
+    "value": "ZSGS"
+  },
+  {
+    "type": "multi",
+    "top": "620px",
+    "left": "365px",
+    "width": "200px",
+    "height": "24px",
+    "value": "KJKJKJH"
+  },
+  {
+    "type": "multi",
+    "top": "746px",
+    "left": "554px",
+    "width": "200px",
+    "height": "24px",
+    "value": "KJHKJH"
+  },
+  {
+    "type": "check",
+    "top": "923px",
+    "left": "608px",
+    "width": "20px",
+    "height": "20px",
+    "value": true
+  },
+  {
+    "type": "check",
+    "top": "919px",
+    "left": "382px",
+    "width": "20px",
+    "height": "20px",
+    "value": true
+  },
+  {
+    "type": "check",
+    "top": "925px",
+    "left": "325px",
+    "width": "20px",
+    "height": "20px",
+    "value": false
+  },
+  {
+    "type": "check",
+    "top": "923px",
+    "left": "299px",
+    "width": "20px",
+    "height": "20px",
+    "value": false
+  },
+  {
+    "type": "check",
+    "top": "917px",
+    "left": "230px",
+    "width": "20px",
+    "height": "20px",
+    "value": true
+  },
+  {
+    "type": "check",
+    "top": "1540px",
+    "left": "268px",
+    "width": "20px",
+    "height": "20px",
+    "value": true
+  },
+  {
+    "type": "check",
+    "top": "1553px",
+    "left": "236px",
+    "width": "20px",
+    "height": "20px",
+    "value": false
+  },
+  {
+    "type": "check",
+    "top": "1576px",
+    "left": "229px",
+    "width": "20px",
+    "height": "20px",
+    "value": false
+  },
+  {
+    "type": "check",
+    "top": "1623px",
+    "left": "380px",
+    "width": "20px",
+    "height": "20px",
+    "value": true
+  }
+]
