@@ -320,6 +320,71 @@
       };
       reader.readAsText(file);
     }
+// --- Load Sample Layout from Hosted GitHub JSON ---
+function loadDefaultLayout() {
+  fetch('form-layout.json')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('formArea').innerHTML = '';
+      data.forEach(item => {
+        const box = document.createElement('div');
+        box.className = 'drag-box';
+        box.dataset.type = item.type;
+        box.style.top = item.top;
+        box.style.left = item.left;
+        box.style.width = item.width;
+        box.style.height = item.height;
+
+        if (item.type === 'char' || item.type === 'multi') {
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = item.value || '';
+          input.maxLength = item.type === 'char' ? 1 : undefined;
+          input.style.width = '100%';
+          input.style.height = '100%';
+          input.style.border = '1px solid #ccc';
+          input.style.outline = 'none';
+          input.style.fontSize = '14px';
+          input.style.background = '#fff';
+          input.style.color = '#000';
+
+          if (item.type === 'char') {
+            input.classList.add('char-box');
+            input.addEventListener('input', function () {
+              if (this.value.length === 1) {
+                const allInputs = [...document.querySelectorAll('.char-box')];
+                const next = allInputs[allInputs.indexOf(this) + 1];
+                if (next) next.focus();
+              }
+            });
+            input.addEventListener('keydown', function (e) {
+              if (e.key === 'Backspace' && this.value === '') {
+                const allInputs = [...document.querySelectorAll('.char-box')];
+                const prev = allInputs[allInputs.indexOf(this) - 1];
+                if (prev) prev.focus();
+              }
+            });
+          }
+
+          box.appendChild(input);
+        } else if (item.type === 'check') {
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = item.value;
+          checkbox.style.width = '100%';
+          checkbox.style.height = '100%';
+          checkbox.style.margin = '0';
+          checkbox.style.cursor = 'pointer';
+          box.appendChild(checkbox);
+        }
+
+        document.getElementById('formArea').appendChild(box);
+        makeDraggable(box);
+      });
+    })
+    .catch(err => alert("Failed to load layout: " + err));
+}
+
 </script>
 <input type="file" accept=".json" onchange="loadLayout(event)" style="margin-top: 10px;">
 <button onclick="saveLayout()">💾 Save Layout</button>
